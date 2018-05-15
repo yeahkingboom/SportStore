@@ -1,0 +1,102 @@
+﻿@model Result
+
+@{
+    ViewData["Title"] = "确认订单";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var ListItems = ViewBag.ItemList as List<CartItem>;
+    var Receivers = ViewBag.Receivers as List<Receiver>;
+    decimal MallDiscout = ViewBag.MallDiscount;
+}
+<script src="~/js/jquery-2.2.3.min.js"></script>
+<h1 class="text-info">确认订单</h1>
+<hr />
+@if (Model.Success)
+{
+
+    <h3 class="text-danger">收货人信息：</h3>
+    <div class="row clearfix">
+
+        @foreach (var receiver in Receivers)
+        {
+            <div class="col-md-2 column address" onclick="SelectAddress(this);" id="@receiver.ID">
+                <address> <strong>收货人：<span class="glyphicon glyphicon-user">@receiver.Name</span></strong><br /> 地址：@receiver.Address<br /> 手机号：@receiver.PhoneNumber</address>
+            </div>
+        }
+        <a href="/Address/Create?returnUrl=/Cart/CheckOut" class="btn btn-lg">添加地址<span class="glyphicon glyphicon-plus"></span></a>
+    </div>
+    
+
+
+
+
+
+    <form asp-action="CheckOut" asp-controller="Cart" method="post" style="margin-top:50px;">
+        <input hidden name="receiverId" id="receiverId" value="@Receivers.FirstOrDefault()?.ID"  required/>
+        @*<div name="Reciver" class="pull-left">
+                <div class=" form-group">
+                    <input name="reciver" class="form-control" required placeholder="请输入收货人" />
+                </div>
+                <div class=" form-group">
+                    <input name="phoneNumber" class="form-control" required placeholder="请输入手机号" />
+                </div>
+                <div class=" form-group">
+                    <input class="area_input form-control" name="address" id="address" required placeholder="请选择城市" />
+                </div>
+                <div class=" form-group">
+                    <input name="street" class="form-control" required placeholder="请输入具体街道" />
+                </div>
+            </div>*@
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>店铺</th>
+                    <th>商品图片</th>
+                    <th>商品名称</th>
+                    <th>商品价格</th>
+                    <th>商品数量</th>
+                    <th>合计</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ListItems.OrderBy(x => x.Product.Shop.ID))
+                {
+                    <tr>
+                        <td>@item.Product.Shop.Name</td>
+                        <td><img src="@item.Product.Images.FirstOrDefault().Url" style="height:90px;width:90px; " /></td>
+                        <td>@item.Product.Name</td>
+                        <td>@(MallDiscout*item.Product.Price * (decimal)item.Product.Shop.ShopDiscount / 100)</td>
+                        <td>@item.Count</td>
+                        <td>@(item.DiscountTotal*MallDiscout/10)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr />
+        <h3 class="text-danger text-right">总记：@ListItems.Sum(x => x.DiscountTotal * MallDiscout / 10) 元</h3>
+
+        <button type="submit" class="btn btn-danger pull-right">提交订单</button>
+    </form>
+
+}
+else
+{
+    <p>@Model.ErrorMsg</p>
+
+}
+<script>
+    $(function () {
+        var ad = $('.address').eq(0).css('border', 'ridge');
+
+    });
+    function SelectAddress(t) {
+        var th = $(t);
+        var ad = $('.address');
+        ad.each(function () {
+            $(this).css('border', '');
+        });
+        th.css('border', 'ridge');
+        $('#receiverId').val(th.prop('id'));
+
+    }
+</script>

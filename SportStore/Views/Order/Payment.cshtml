@@ -1,0 +1,107 @@
+﻿@model IEnumerable<SportStore.Models.Order>
+
+@{
+    ViewData["Title"] = "支付";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/js/jquery-2.2.3.min.js"></script>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                订单编号
+            </th>
+            <th>
+                金额
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="OrderID" id="@item.ID">@item.ID</td>
+                <td>@item.TotalPrice</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<hr />
+
+
+<h3 class="text-danger">支付方式：</h3>
+<div class="row clearfix">
+    <input hidden id="PayWay" value="在线支付" />
+        <div class="col-md-2 column payway" onclick="SelectPayWay(this);" id="在线支付">
+            <h5 class="text-center">在线支付</h5>
+        </div>
+        <div class="col-md-2 column payway" onclick="SelectPayWay(this);" id="货到付款">
+            <h5 class="text-center">货到付款</h5>
+        </div>
+</div>
+<hr />
+<h3 class="text-danger text-right">总记：@Model.Sum(x => x.TotalPrice) 元</h3>
+<a class="btn btn-danger pull-right" onclick="Pay();" >支付</a>
+
+<div class="modal fade" id="PayTips" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close"  href="" aria-hidden="true">×</a>
+                <h4 class="modal-title" id="myModalLabel">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p>是否支付成功?</p>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-default"  href="">关闭</a>
+                <a type="button" class="btn btn-primary" href="/Order/Index">支付成功</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(function () {
+        var ad = $('.payway').eq(0).css('border', 'ridge');
+
+    });
+    function SelectPayWay(t) {
+        var th = $(t);
+        var ad = $('.payway');
+        ad.each(function () {
+            $(this).css('border', '');
+        });
+        th.css('border', 'ridge');
+        $('#PayWay').val(th.prop('id'));
+    }
+
+    function Pay() {
+        var id = [];
+        var payway = $('#PayWay').val();
+        $('.OrderID').each(function () {
+            id.push($(this).prop('id'));
+        });
+        $.ajax({
+            url: "/Order/Payment",
+            type: "POST",
+            data: { "id": id, "payWay": payway },
+            success: function (result) {
+                if (result.success) {
+                    window.open(result.errorMsg, "_blank");
+                    $("#PayTips").modal("show");
+                }
+                else {
+                    alert(result.errorMsg);
+                }
+
+            },
+            error: function () {
+                alert('网络出现问题，请重试！');
+            }
+        });
+
+    }
+</script>

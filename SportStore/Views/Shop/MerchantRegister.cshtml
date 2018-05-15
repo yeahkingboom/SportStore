@@ -1,0 +1,43 @@
+﻿@model SportStore.Models.Apply
+
+@{
+    ViewData["Title"] = "商家注册";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>商家注册</h2>
+
+<hr />
+@if (Model == null || Model.Status == ApplyStatus.False)
+{
+    if (Model?.Status == ApplyStatus.False)
+    {
+        <h3>审核状态：未通过</h3>
+    }
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="MerchantRegister" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="control-label">名称</label>
+                    <input asp-for="DocumentName" class="form-control" />
+                    <span asp-validation-for="DocumentName" class="text-danger">@(ViewBag.Result?.ErrorMsg)</span>
+                </div>
+                <div class="form-group"><label>申请材料(请上传zip压缩包)</label><input name="document" class="form-control" required type="file" /></div>
+                <div class="form-group">
+                    <input type="submit" value="注册" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+}
+else
+{
+        <h3>审核状态：正在审核</h3>
+}
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

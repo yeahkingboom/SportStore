@@ -1,0 +1,64 @@
+﻿@model IEnumerable<SportStore.Models.Products>
+
+@{
+    ViewData["Title"] = "商品库存";
+    Layout = "~/Views/Shared/_MyShopLayout.cshtml";
+}
+
+<h2>库存</h2>
+<form class="navbar-form navbar-left" role="search" method="get" asp-action="Stocks" asp-controller="Shop">
+    <div>
+        <span class="input-group" style=" padding-top:10px;">
+            <input type="text" class="form-control" placeholder="输入搜索..." name="KeyWord">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </span>
+    </div> 
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                商品类别
+            </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Stocks)
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.Category.Name
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stocks)
+            </td>
+            <td>
+                <a asp-action="EditProduct" asp-route-id="@item.ID" class="btn btn-primary">修改</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

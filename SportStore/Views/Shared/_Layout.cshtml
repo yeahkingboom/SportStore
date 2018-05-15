@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 体育用品在线商城</title>
+    <script src="~/js/mag.js"></script>
+    
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2 col-sm-4">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">体育用品在线商城</a>
+                    </div>
+                </div>
+                <div class="col-md-10 col-sm-8">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">个人中心<strong class="caret"></strong></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a asp-action="Index" asp-controller="Order">我的订单</a></li>
+                                            <li><a asp-action="Index" asp-controller="Account">基本信息</a></li>
+                                            <li><a asp-action="Index" asp-controller="Address">收货地址</a></li>
+                                        </ul>
+                                    </li>
+                                    
+                                    <li><a asp-area="" asp-controller="Cart" asp-action="Index">购物车</a></li>
+                                </ul>
+                                <div>
+                                    <form asp-action="Index" asp-controller="Home" method="get">
+                                        <span class="input-group col-md-6" style=" padding-top:10px;">
+                                            <input type="text" class="form-control" placeholder="输入搜索..." required name="KeyWord">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                                            </span>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class=" navbar-header   col-md-offset-2">
+                            <div class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <li><a>@User.Identity.Name,你好</a></li>
+                                        <li><a asp-area="" asp-controller="Account" asp-action="Logout">注销</a></li>
+                                        @if (User.IsInRole("Merchant"))
+                                        {
+                                            <li><a asp-controller="Shop" asp-action="MyShop">商家中心</a></li>
+
+                                        }
+                                        else if (User.IsInRole("Administrator"))
+                                        {
+                                            <li><a asp-controller="Admin" asp-action="Index">商城管理</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a asp-controller="Shop" asp-action="MerchantRegister">成为商家</a></li>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <li><a asp-area="" asp-controller="Account" asp-action="Login">登录</a></li>
+                                        <li><a asp-area="" asp-controller="Account" asp-action="Register">注册</a></li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </nav>
+    <div class="container body-content">
+        @RenderBody()
+        
+        <div class="modal fade" id="LoginTips" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            提示
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>您还没有登录,请先登录再进行操作</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <a asp-action="Login" asp-controller="Account" class="btn btn-primary">登录</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="CartTips" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            提示
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>已经加入购物车</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">继续购物</button>
+                        <a asp-action="Index" asp-controller="Cart" class="btn btn-primary">去结算</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer>
+            <div class="row" style="margin-top:200px;">
+            </div>
+            <hr />
+            <p>&copy; 2018 - 体育用品在线商城</p>
+
+        </footer>
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        function AddCart(id) {
+            $.ajax({
+                url: "/Cart/Add?productId=" + id,
+                type: "POST",
+                success: function (result) {
+                    if (result.success) {
+                        $('#CartTips').modal('show');
+
+                    }
+                    else {
+                        alert(result.errorMsg);
+                    }
+                },
+                error: function () {
+                    alert('网络出现问题，请重试！');
+
+                }
+
+            });
+
+        }
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

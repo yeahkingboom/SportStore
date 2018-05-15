@@ -1,0 +1,41 @@
+﻿@model SportStore.Models.MallInfo
+
+@{
+    ViewData["Title"] = "商城信息";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="MallInfo">
+            <input type="hidden" asp-for="ID" />
+            <div class=" form-group">
+                        <label class="control">活动折扣</label>
+                        <select name="Discount" required>
+                            @for(int i = 1; i < 11; i++)
+                            {
+                                if (i == Model.Discount)
+                                {
+                                    <option value="@i" selected>@i 折</option>
+                                }
+                                else
+                                {
+
+                                    <option value="@i">@i 折</option>
+                                }
+                            }
+                            
+                        </select>
+                    </div>
+            <div class=" form-group">
+                <label class="control">公告</label>
+                <textarea cols="80" rows="50" placeholder="@Model.Notice" class="mytextarea" id="Notice" name="Notice">@Model.Notice</textarea>
+            </div>
+            <div class="form-group">
+                <a href="" class="btn btn-default">重置</a>
+                <input type="submit" value="保存" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

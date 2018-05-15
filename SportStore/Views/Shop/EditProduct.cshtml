@@ -1,0 +1,55 @@
+﻿@model SportStore.Models.Products
+
+@{
+    ViewData["Title"] = "AddProduct";
+    Layout = "~/Views/Shared/_MyShopLayout.cshtml";
+    var Category = ViewBag.Category as List<Category>;
+    var Status = ViewBag.Status as List<Status>;
+}
+
+<form asp-action="EditProduct" asp-controller="Shop" method="post" name="product" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>商品类型</label>
+        <select class="form-control" name="pro.Category.ID">
+            @foreach (var item in Category)
+            {
+                if (item.ID == Model.Category.ID)
+                {
+                    <option value="@item.ID" selected>@item.Name</option>
+                }
+                else
+                {
+                    <option value="@item.ID">@item.Name</option>}
+
+            }
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>商品状态</label>
+        <select class="form-control" name="pro.Status.ID">
+            @foreach (var s in Status)
+            {
+                if (s.ID == Model.Status.ID)
+                {
+                    <option value="@s.ID" selected>@s.Name</option>
+                }
+                else
+                {
+                    <option value="@s.ID">@s.Name</option>
+                }
+
+            }
+            }
+        </select>
+    </div>
+    <div class="form-group"><label>商品名称</label><input name="pro.Name" class="form-control" value="@Model.Name" required /></div>
+
+    <div class="form-group"><label>商品价格</label><input name="pro.Price" class="form-control" value="@Model.Price" required min="0" /></div>
+    <div class="form-group"><label>商品库存</label><input name="pro.Stocks" class="form-control" value="@Model.Stocks" required type="number" min="0" /></div>
+    <div class="form-group"><label>商品描述</label><textarea name="pro.Description" class="form-control" min="5" style="height:200px;">@Model.Description</textarea></div>
+    <div class="form-group"><label>新增商品图片</label><input name="image" class="form-control" type="file" /></div>
+    <input name="pro.ID" value="@Model.ID" hidden />
+    <button type="submit" class="btn btn-primary">保存</button>
+</form>
+

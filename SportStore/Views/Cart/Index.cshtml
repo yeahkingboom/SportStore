@@ -1,0 +1,152 @@
+﻿@model IEnumerable<SportStore.Models.CartItem>
+
+@{
+    ViewData["Title"] = "购物车";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Items = Model?.GroupBy(x => x.Product.Shop.Name);
+    decimal MallDiscout = ViewBag.MallDiscount;
+}
+<link href="~/css/carts.css" rel="stylesheet" />
+<link href="~/css/reset.css" rel="stylesheet" />
+<script src="~/js/jquery-2.2.3.min.js"></script>
+<script src="~/js/carts.js"></script>
+
+<section class="cartMain" style="padding-top:60px;">
+    <div class="cartMain_hd">
+        <ul class="order_lists cartTop">
+            <li class="list_chk">
+                <!--所有商品全选-->
+                <input type="checkbox" id="-1" class="whole_check">
+                @*<label for="all"></label>*@
+                全选
+            </li>
+            <li class="list_con">商品信息</li>
+            <li class="list_info">商品参数</li>
+            <li class="list_price">单价</li>
+            <li class="list_amount">数量</li>
+            <li class="list_sum">金额</li>
+            <li class="list_op">操作</li>
+        </ul>
+    </div>
+    @if (Items!=null)
+    {
+        foreach (var item in Items)
+        {
+            <div class="cartBox">
+                <div class="shop_info">
+                    @*<div class="all_check">
+                            店铺全选
+                            <input type="checkbox" id="shop_a" class="shopChoice">
+                            <label for="shop_a" class="shop"></label>
+                        </div>*@
+                    <div class="shop_name">
+                        店铺：<a href="javascript:;">@item.Key</a>
+                    </div>
+                </div>
+                <div class="order_content">
+                    @foreach(var pro in item)
+                    {
+                        <ul class="order_lists">
+                        <li class="list_chk">
+                            @if (pro.Selected)
+                            {
+
+                                <input type="checkbox" id="@pro.ID" class="son_check" checked="checked">
+                                //<label for="checkbox_2" class="mark"></label>
+
+                                
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="@pro.ID" class="son_check">
+                                //<span for="checkbox_2" class="mark"></span>
+
+
+                            }
+                            
+                        </li>
+                        <li class="list_con">
+                            <div class="list_img"><a asp-action="Index" asp-controller="Product" asp-route-id="@pro.Product.ID"><img   style="width:90px;height:90px;" src="@pro.Product.Images.FirstOrDefault().Url" alt=""></a></div>
+                            <div class="list_text"><a asp-action="Index" asp-controller="Product" asp-route-id="@pro.Product.ID">@pro.Product.Name</a></div>
+                        </li>
+                        <li class="list_info">
+                            <p>@pro.Product.Description</p>
+                        </li>
+                        <li class="list_price">
+                            <p class="price">￥@(MallDiscout*pro.Product.Price*(decimal)pro.Product.Shop.ShopDiscount/100)</p>
+                        </li>
+                        <li class="list_amount">
+                            <div class="amount_box">
+                                <a href="javascript:;" id="@pro.Product.ID" class="reduce">-</a>
+                                <input type="text" value="@pro.Count" id="@pro.Product.ID" class="sum">
+                                <a href="javascript:;" id="@pro.Product.ID" class="plus">+</a>
+                            </div>
+                        </li>
+                        <li class="list_sum">
+                            <p class="sum_price">￥@(pro.DiscountTotal*MallDiscout/10)</p>
+                        </li>
+                        <li class="list_op">
+                            <p class="del"><a href="javascript:;" id="@pro.ID" class="delBtn">移除商品</a></p>
+                        </li>
+                    </ul>
+
+                    }
+                    
+
+                </div>
+            </div>
+
+        }
+
+    }
+    else
+    {
+        <p>购物车空无一物</p>
+
+    }
+
+    <!--底部-->
+    <div class="bar-wrapper">
+        <div class="bar-right">
+            <div class="piece">已选商品<strong class="piece_num">0</strong>件</div>
+            <div class="totalMoney">共计: <strong class="total_text">0.00</strong></div>
+            <div class="calBtn"><a asp-controller="Cart" asp-action="CheckOut">结算</a></div>
+        </div>
+    </div>
+</section>
+<section class="model_bg"></section>
+<section class="my_model">
+    <p class="title">删除宝贝<span class="closeModel">X</span></p>
+    <p>您确认要删除该宝贝吗？</p>
+    <div class="opBtn"><a href="javascript:;" class="dialog-sure">确定</a><a href="javascript:;" class="dialog-close">关闭</a></div>
+</section>
+<script>
+    $(function() {
+        var total_money = 0;
+        var total_count = 0;
+        var calBtn = $('.calBtn a');
+        $sonCheckBox = $('.son_check');
+        $sonCheckBox.each(function () {
+            if ($(this).is(':checked')) {
+                var goods = parseFloat($(this).parents('.order_lists').find('.sum_price').html().substring(1));
+                var num = parseFloat($(this).parents('.order_lists').find('.sum').val());
+                total_money += goods;
+                total_count += num;
+            }
+        });
+        $('.total_text').html('￥' + total_money);
+        $('.piece_num').html(total_count);
+
+        // console.log(total_money,total_count);
+
+        if (total_money != 0 && total_count != 0) {
+            if (!calBtn.hasClass('btn_sty')) {
+                calBtn.addClass('btn_sty');
+            }
+        } else {
+            if (calBtn.hasClass('btn_sty')) {
+                calBtn.removeClass('btn_sty');
+            }
+        }
+    })
+</script>

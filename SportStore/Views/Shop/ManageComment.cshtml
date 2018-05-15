@@ -1,0 +1,111 @@
+﻿@model IEnumerable<SportStore.Models.Comment>
+
+@{
+    ViewData["Title"] = "回复用户评论";
+    Layout = "~/Views/Shared/_MyShopLayout.cshtml";
+}
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                评论时间
+            </th>
+            <th>
+                商品名称
+            </th>
+            <th>
+                评论者
+            </th>
+            <th>
+                内容
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.CreateTime
+                </td>
+                <td>
+                    <a asp-action="Index" asp-controller="Product" asp-route-id="@item.Product.ID">@item.Product.Name</a>
+                </td>
+                <td>
+                    @item.Account.Name
+                </td>
+                <td>
+                    @item.Content
+                </td>
+                <td><a onclick="Getid(@item.ID);">回复</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="Reply" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">
+                    回复评论
+                </h4>
+            </div>
+            <form asp-action="Reply" asp-controller="Shop" method="post">
+                <div class="modal-body">
+                    <textarea cols="80" rows="50" placeholder="来说几句吧......" class="mytextarea" id="content" name="content" required></textarea>
+                    <input name="id" id="CommentID" required hidden />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-info pull-right" onclick="Reply();">评论</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    function Getid(id) {
+        $("#CommentID").val(id);
+        $("#Reply").modal('show');
+    }
+    function Reply() {
+        var id = $("#CommentID").val();
+        if (id == '') {
+            alert('出现异常，请重试！'); return;
+        }
+        var con = $("#content").val();
+        if (con == '') {
+            alert("请输入回复内容！");
+            return;
+
+        }
+        $.ajax({
+            url: "/Shop/Reply",
+            type: "POST",
+            data: { commentid: id, content:con },
+            success: function (result) {
+                if (result.success) {
+                    window.location.reload();
+
+                }
+                else {
+                    alert(result.errorMsg);
+
+                }
+
+            },
+            error: function () {
+                alert('网络错误，请重试！');
+
+            }
+        
+})
+
+    }
+
+</script>

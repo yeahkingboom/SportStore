@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Account>
+
+@{
+    ViewData["Title"] = "用户管理";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<form asp-action="ManageUser" asp-controller="Admin" method="get">
+    <span class="input-group col-md-6" style=" padding-top:10px;">
+        <input type="text" class="form-control" placeholder="输入搜索..." required name="KeyWord">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+    </span>
+</form>
+<hr />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>用户名</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            if (item.GetType().ToString().Contains("Admin"))
+            {
+
+
+            }
+            else
+            {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a onclick="Getid(@item.ID)"> 修改密码</a>|
+                    <a asp-action="DeleteUser" asp-controller="Admin" asp-route-id="@item.ID">删除</a>
+                </td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="ChangePassword" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">
+                    修改密码
+                </h4>
+            </div>
+            <form asp-action="ChangePassword" asp-controller="Admin" method="post">
+                <div class="modal-body">
+                    <input type="password" class="form-control" placeholder="输入新密码..." name="NewPassword" required>
+                    <input name="id" id="UserID" required hidden/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">修改</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+<script>
+    function Getid(id) {
+        $("#UserID").val(id);
+        $("#ChangePassword").modal('show');
+    }
+   
+</script>

@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Apply>
+
+@{
+    Layout = "_AdminLayout";
+    List<Shop> shop = ViewBag.Shop as List<Shop>;
+}
+
+
+<h3 class="text-center">
+    商店管理
+</h3>
+<div class="tabbable" id="tabs-487093">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#panel-881635" data-toggle="tab">待审核</a>
+        </li>
+        <li>
+            <a href="#panel-143366" data-toggle="tab">已审核</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="panel-881635">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>名称</td>
+                        <td>申请人</td>
+                        <td>申请时间</td>
+                        <td>申请材料</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.DocumentName</td>
+                                <td>@item.Account.Name</td>
+                                <td>@item.CreateTime</td>
+                                <td><a href="@item.DocumentUrl">下载</a></td>
+                                <td><a class="btn btn-primary"  href="/Admin/Check?id=@item.ID&check=True">通过</a><a class="btn btn-danger" href="/Admin/Check?id=@item.ID&check=False">不通过</a></td>
+                            </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane" id="panel-143366">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>名称</td>
+                        <td>店主</td>
+                        <td>创建时间</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+  
+                        @foreach (var item in shop)
+                        {
+
+                        <tr>
+                            <td>@item.ID</td>
+                            <td>@item.Name</td>
+                            <td>@item.Merchant.Name</td>
+                            <td>@item.CreateTime</td>
+                            @if (item.Status != -1)
+                            {
+                                <td><a class="btn btn-danger"  asp-action="Freeze" asp-controller="Admin" asp-route-id="@item.ID">冻结</a></td>
+                            }
+                            else
+                            {
+                                <td><a class="btn btn-default" asp-action="UnFreeze" asp-controller="Admin" asp-route-id="@item.ID">解冻</a></td>
+                            }
+
+                        </tr>
+
+                        }
+
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

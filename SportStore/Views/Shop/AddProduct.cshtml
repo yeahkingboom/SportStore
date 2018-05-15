@@ -1,0 +1,24 @@
+﻿@model SportStore.Models.Products
+
+@{
+    ViewData["Title"] = "AddProduct";
+    Layout = "~/Views/Shared/_MyShopLayout.cshtml";
+    var Category = ViewBag.Category as List<Category>;
+}
+
+
+<form asp-action="AddProduct" asp-controller="Shop" method="post" name="product" enctype="multipart/form-data">
+    <div class="form-group">
+    <label>商品类型</label>
+    <select class="form-control" name="product.Category.ID">
+        @foreach(var item in Category) {<option value="@item.ID">@item.Name</option> }
+        </select>
+    </div>
+    <div class="form-group"><label>商品名称</label><input name="product.Name" class="form-control" required /></div>
+    <div class="form-group"><label>商品价格</label><input name="product.Price" class="form-control" required min="0" /></div>
+    <div class="form-group"><label>商品库存</label><input name="product.Stocks" class="form-control" required type="number" min="0" /></div>
+    <div class="form-group"><label>商品描述</label><textarea name="product.Description" class="form-control" min="5" style="height:200px;" ></textarea></div>
+    <div class="form-group"><label>商品图片</label><input name="image" class="form-control" required type="file" /></div>
+    <button type="submit" class="btn btn-primary">添加商品</button>
+</form>
+

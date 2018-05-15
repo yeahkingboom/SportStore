@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SportStore.Models.Receiver>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>收货地址</h2>
+<a class="btn btn-default"  asp-action="Create" asp-controller="Address">添加地址<span class="glyphicon glyphicon-plus"></span></a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+                <th>
+                    收货人
+                </th>
+                <th>
+                    手机号
+                </th>
+                <th>
+                    地址
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.PhoneNumber
+            </td>
+            <td>
+                @item.Address
+            </td>
+            <td>
+                @*<a asp-action="Edit" asp-route-id="@item.ID" asp-controller="Address">编辑</a> |*@
+                <a asp-action="Delete" asp-route-id="@item.ID" asp-controller="Address">删除</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,98 @@
+﻿@model SportStore.Models.Products
+
+@{
+    ViewData["Title"] = "评论";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<link href="~/css/ProductDetails.css" rel="stylesheet" />
+<script src="/lib/jquery/dist/jquery.js"></script>
+<div class="bg">
+    <div class="bg_left">
+        <div class="show">
+            <img src="@Model.Images.FirstOrDefault().Url" alt="">
+            <div class="mask"></div>
+        </div>
+        <div class="smallshow">
+            <p class="prev prevnone"></p>
+            <div class="middle_box">
+                <ul class="middle">
+                    @foreach (var item in Model.Images)
+                    {
+                        <li><img src="@item.Url" /></li>
+
+                    }
+
+                </ul>
+            </div>
+            <p class="next "></p>
+        </div>
+    </div>
+    <div class="bg_right">
+        <div class="bigshow">
+            <div class="bigitem">
+                <img src="@Model.Images.FirstOrDefault().Url" alt="">
+            </div>
+        </div>
+        <div class="pro_list">
+            <div style="padding-left:10px;">
+                <h1 class="text-left">
+                    @Model.Name
+                </h1>
+            </div>
+            <div style="width: 220px; line-height: 24px; font-size: 20px; color: #eb4e01;padding-top:20px; padding-left:10px;">价格：<span class="glyphicon glyphicon-yen">@Model.Price</span></div>
+            <div style="width: 220px; line-height: 24px; font-size: 20px; padding-top:20px; padding-left:10px;">
+                <p>库存：@Model.Stocks</p>
+                <hr />
+                @*@if (User.Identity.IsAuthenticated)
+                {
+                    <button class="btn btn-primary addCart" id="@Model.ID" onclick="AddCart(@Model.ID)">加入购物车</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary addCart" id="@Model.ID" href="#LoginTips" role="button" data-toggle="modal">加入购物车</button>
+
+                }*@
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<hr />
+<div class="row clearfix">
+    <div class="col-md-12 column">
+        <div class="jumbotron well">
+            <h3>
+                商品信息
+            </h3>
+            <h4>
+                商品编号：@Model.ID
+            </h4>
+            <h4>
+                商品名称：@Model.Name
+            </h4>
+            <h4>
+                商品类别：@Model.Category.Name
+            </h4>
+            <h4>
+                商品描述：@Model.Description
+            </h4>
+        </div>
+    </div>
+</div>
+<h3>商品评论</h3>
+<hr />
+<form asp-action="Comment" asp-controller="Product" method="post">
+    <div class="commentbox">
+        <input name="id" hidden value="@Model.ID" />
+        <textarea cols="80" rows="50" placeholder="来说几句吧......" class="mytextarea" id="content" name="content" required></textarea>
+        <button type="submit" class="btn btn-info pull-right">评论</button>
+    </div>
+</form>
+<script>
+    var obj = new mag('.show', '.bigshow', '.smallshow', '.mask', '.bigitem', '.pro_list');
+    obj.init();
+</script>

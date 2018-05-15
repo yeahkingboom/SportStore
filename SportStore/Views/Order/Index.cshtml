@@ -1,0 +1,396 @@
+﻿@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "我的订单";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="tabbable" id="Order">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#All" data-toggle="tab">全部订单</a>
+        </li>
+        <li>
+            <a href="#UnPay" data-toggle="tab">待支付</a>
+        </li>
+        <li>
+            <a href="#UnDelivery" data-toggle="tab">待发货</a>
+        </li>
+        <li>
+            <a href="#Delivering" data-toggle="tab">待收货</a>
+        </li>
+        <li>
+            <a href="#AlreadyDone" data-toggle="tab">已完成</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="All">
+            <table class="table order_content table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单详情</th>
+                        <th>收货人</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model)
+                {
+                    
+                        <tr  class="order_lists" id="@item.ID">
+                            <td><p class="">@item.ID</p></td>
+                            <td>
+                                @foreach(var orderItem in item.OrderItems)
+                                {
+                                <div style="margin-top:5px;" class="row">
+                                    <div class="col-md-2">
+                                        <a asp-action="Index" asp-controller="Product" asp-route-id="@orderItem.Product.ID">
+                                            <img src="@orderItem.Product.Images.FirstOrDefault().Url" style="height:60px;width:60px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>商品名称:@orderItem.Product.Name</span>
+                                        <br />
+                                        <span>商品价格:@orderItem.Price</span>
+                                        <br />
+                                        <span>商品数量:@orderItem.Count</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        @if (item.Status.ID == 4)
+                                        {
+                                            <a  asp-controller="Product" asp-action="Comment" asp-route-id="@orderItem.Product.ID" class="btn btn-default">评价</a>
+                                        }
+                                    </div>
+                                </div>
+                                <hr />
+                                }
+                                
+                            </td>
+                            <td><span class="glyphicon glyphicon-user" >@item.Receiver.Name</span></td>
+                            <td><span class="glyphicon glyphicon-yen" style="color:sandybrown">@item.TotalPrice</span></td>
+                            <td>@item.Status.Name</td>
+                            
+                                @switch (item.Status.ID)
+                                {
+                                    case (long)OrdStatus.New:
+                                    case (long)OrdStatus.UnPay:<td>
+                                                                    <a asp-action="Payment" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-danger">去支付</a>
+                                                                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">取消订单</a>
+                                                               </td> break;
+                                    case (long)OrdStatus.UnDelivery:<td><a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-primary">取消订单</a></td>break;
+                                    case (long)OrdStatus.Delivering:<td>
+                                                                        <a class="btn btn-primary">查看物流</a>
+                                                                        <a asp-action="ConfirmDelivery" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">确认收货</a>
+                                                                    </td> break;
+                                    case (long)OrdStatus.Closed:<td><a asp-action="Delete" asp-controller="Order" asp-route-id="@item.ID">删除订单</a></td>break;
+                                    case (long)OrdStatus.Closing:<td><a style="color:lightgrey">取消中</a></td> break;
+                                    case (long)OrdStatus.AlreadyDone:<td><a style="color:lightgrey">已完成</a></td> break;
+                                    default:<td></td>break;
+                                }
+
+
+                        </tr>
+
+
+
+
+                }
+                </tbody>
+            </table>
+
+
+        </div>
+        <div class="tab-pane" id="UnPay">
+            <table class="table order_content table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单详情</th>
+                        <th>收货人</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model.Where(x=>x.Status.ID==(long)OrdStatus.UnPay|| x.Status.ID == (long)OrdStatus.New))
+                {
+
+                        <tr  class="order_lists" id="@item.ID">
+                            <td><p class="">@item.ID</p></td>
+                            <td>
+                                @foreach(var orderItem in item.OrderItems)
+                                {
+                                <div style="margin-top:5px;" class="row">
+                                    <div class="col-md-2">
+                                        <a asp-action="Index" asp-controller="Product" asp-route-id="@orderItem.Product.ID">
+                                            <img src="@orderItem.Product.Images.FirstOrDefault().Url" style="height:60px;width:60px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>商品名称:@orderItem.Product.Name</span>
+                                        <br />
+                                        <span>商品价格:@orderItem.Price</span>
+                                        <br />
+                                        <span>商品数量:@orderItem.Count</span> 
+                                    </div>
+                                    <div class="col-md-6">
+
+                                    </div>
+                                </div>
+                                <hr />
+                                }
+                                
+                            </td>
+                            <td><span class="glyphicon glyphicon-user" >@item.Receiver.Name</span></td>
+                            <td><span class="glyphicon glyphicon-yen" style="color:sandybrown">@item.TotalPrice</span></td>
+                            <td>@item.Status.Name</td>
+                            
+                                @switch (item.Status.ID)
+                                {
+                                    case (long)OrdStatus.New:
+                                    case (long)OrdStatus.UnPay:<td>
+                                                                    <a asp-action="Payment" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-danger">去支付</a>
+                                                                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">取消订单</a>
+                                                               </td> break;
+                                    case (long)OrdStatus.UnDelivery:<td><a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-primary">取消订单</a></td>break;
+                                    case (long)OrdStatus.Delivering:<td>
+                                                                        <a class="btn btn-primary">查看物流</a>
+                                                                        <a asp-action="ConfirmDelivery" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">确认收货</a>
+                                                                    </td> break;
+                                    case (long)OrdStatus.Closed:<td><a asp-action="Delete" asp-controller="Order" asp-route-id="@item.ID">删除订单</a></td>break;
+                                    case (long)OrdStatus.Closing:<td><a style="color:lightgrey">取消中</a></td> break;
+                                    case (long)OrdStatus.AlreadyDone:<td><a style="color:lightgrey">已完成</a></td> break;
+                                    default:<td></td>break;
+                                }
+
+
+                        </tr>
+                     
+
+
+                }
+                </tbody> 
+            </table>
+        </div>
+        <div class="tab-pane" id="UnDelivery">
+            <table class="table order_content table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单详情</th>
+                        <th>收货人</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model.Where(x=>x.Status.ID==(long)OrdStatus.UnDelivery))
+                {
+                    
+                        <tr  class="order_lists" id="@item.ID">
+                            <td><p class="">@item.ID</p></td>
+                            <td>
+                                @foreach(var orderItem in item.OrderItems)
+                                {
+                                <div style="margin-top:5px;" class="row">
+                                    <div class="col-md-2">
+                                        <a asp-action="Index" asp-controller="Product" asp-route-id="@orderItem.Product.ID">
+                                            <img src="@orderItem.Product.Images.FirstOrDefault().Url" style="height:60px;width:60px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>商品名称:@orderItem.Product.Name</span>
+                                        <br />
+                                        <span>商品价格:@orderItem.Price</span>
+                                        <br />
+                                        <span>商品数量:@orderItem.Count</span>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                    </div>
+                                </div>
+                                <hr />
+                                }
+                                
+                            </td>
+                            <td><span class="glyphicon glyphicon-user" >@item.Receiver.Name</span></td>
+                            <td><span class="glyphicon glyphicon-yen" style="color:sandybrown">@item.TotalPrice</span></td>
+                            <td>@item.Status.Name</td>
+                            
+                                @switch (item.Status.ID)
+                                {
+                                    case (long)OrdStatus.New:
+                                    case (long)OrdStatus.UnPay:<td>
+                                                                    <a asp-action="Payment" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-danger">去支付</a>
+                                                                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">取消订单</a>
+                                                               </td> break;
+                                    case (long)OrdStatus.UnDelivery:<td><a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-primary">取消订单</a></td>break;
+                                    case (long)OrdStatus.Delivering:<td>
+                                                                        <a class="btn btn-primary">查看物流</a>
+                                                                        <a asp-action="ConfirmDelivery" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">确认收货</a>
+                                                                    </td> break;
+                                    case (long)OrdStatus.Closed:<td><a asp-action="Delete" asp-controller="Order" asp-route-id="@item.ID">删除订单</a></td>break;
+                                    case (long)OrdStatus.Closing:<td><a style="color:lightgrey">取消中</a></td> break;
+                                    case (long)OrdStatus.AlreadyDone:<td><a style="color:lightgrey">已完成</a></td> break;
+                                    default:<td></td>break;
+                                }
+
+
+                        </tr>
+                     
+
+
+                }
+                </tbody> 
+            </table>
+        </div>
+        <div class="tab-pane" id="Delivering">
+            <table class="table order_content table-striped table-bordered" >
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单详情</th>
+                        <th>收货人</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model.Where(x=>x.Status.ID==(long)OrdStatus.Delivering))
+                {
+                    
+                        <tr  class="order_lists" id="@item.ID">
+                            <td><p class="">@item.ID</p></td>
+                            <td>
+                                @foreach(var orderItem in item.OrderItems)
+                                {
+                                <div style="margin-top:5px;" class="row">
+                                    <div class="col-md-2">
+                                        <a asp-action="Index" asp-controller="Product" asp-route-id="@orderItem.Product.ID">
+                                            <img src="@orderItem.Product.Images.FirstOrDefault().Url" style="height:60px;width:60px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>商品名称:@orderItem.Product.Name</span>
+                                        <br />
+                                        <span>商品价格:@orderItem.Price</span>
+                                        <br />
+                                        <span>商品数量:@orderItem.Count</span>
+                                    </div>
+                                    <div class="col-md-6">
+
+                                    </div>
+                                </div>
+                                <hr />
+                                }
+                                
+                            </td>
+                            <td><span class="glyphicon glyphicon-user" >@item.Receiver.Name</span></td>
+                            <td><span class="glyphicon glyphicon-yen" style="color:sandybrown">@item.TotalPrice</span></td>
+                            <td>@item.Status.Name</td>
+                            
+                                @switch (item.Status.ID)
+                                {
+                                    case (long)OrdStatus.New:
+                                    case (long)OrdStatus.UnPay:<td>
+                                                                    <a asp-action="Payment" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-danger">去支付</a>
+                                                                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">取消订单</a>
+                                                               </td> break;
+                                    case (long)OrdStatus.UnDelivery:<td><a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-primary">取消订单</a></td>break;
+                                    case (long)OrdStatus.Delivering:<td>
+                                                                        <a class="btn btn-primary">查看物流</a>
+                                                                        <a asp-action="ConfirmDelivery" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">确认收货</a>
+                                                                    </td> break;
+                                    case (long)OrdStatus.Closed:<td><a asp-action="Delete" asp-controller="Order" asp-route-id="@item.ID">删除订单</a></td>break;
+                                    case (long)OrdStatus.Closing:<td><a style="color:lightgrey">取消中</a></td> break;
+                                    case (long)OrdStatus.AlreadyDone:<td><a style="color:lightgrey">已完成</a></td> break;
+                                    default:<td></td>break;
+                                }
+
+                        </tr>
+                     
+
+
+                }
+                </tbody> 
+            </table>
+        </div>
+        <div class="tab-pane" id="AlreadyDone">
+            <table class="table order_content table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单详情</th>
+                        <th>收货人</th>
+                        <th>金额</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach(var item in Model.Where(x=>x.Status.ID==(long)OrdStatus.AlreadyDone))
+                {                    
+                        <tr  class="order_lists" id="@item.ID">
+                            <td><p class="">@item.ID</p></td>
+                            <td>
+                                @foreach(var orderItem in item.OrderItems)
+                                {
+                                <div style="margin-top:5px;" class="row">
+                                    <div class="col-md-2">
+                                        <a asp-action="Index" asp-controller="Product" asp-route-id="@orderItem.Product.ID">
+                                            <img src="@orderItem.Product.Images.FirstOrDefault().Url" style="height:60px;width:60px;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>商品名称:@orderItem.Product.Name</span>
+                                        <br />
+                                        <span>商品价格:@orderItem.Price</span>
+                                        <br />
+                                        <span>商品数量:@orderItem.Count</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a asp-controller="Product" asp-action="Comment" asp-route-id="@orderItem.Product.ID" class="btn btn-default">评价</a>
+                                    </div>
+                                </div>
+                                <hr />
+                                }                                
+                            </td>
+                            <td><span class="glyphicon glyphicon-user" >@item.Receiver.Name</span></td>
+                            <td><span class="glyphicon glyphicon-yen" style="color:sandybrown">@item.TotalPrice</span></td>
+                            <td>@item.Status.Name</td>
+                            
+                                @switch (item.Status.ID)
+                                {
+                                    case (long)OrdStatus.New:
+                                    case (long)OrdStatus.UnPay:<td>
+                                                                    <a asp-action="Payment" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-danger">去支付</a>
+                                                                    <a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">取消订单</a>
+                                                               </td> break;
+                                    case (long)OrdStatus.UnDelivery:<td><a asp-action="Cancel" asp-controller="Order" asp-route-id="@item.ID" class="btn btn-primary">取消订单</a></td>break;
+                                    case (long)OrdStatus.Delivering:<td>
+                                                                        <a class="btn btn-primary">查看物流</a>
+                                                                        <a asp-action="ConfirmDelivery" asp-controller="Order" asp-route-id="@item.ID" style="margin-left:5px;" class="btn btn-primary">确认收货</a>
+                                                                    </td> break;
+                                    case (long)OrdStatus.Closed:<td><a asp-action="Delete" asp-controller="Order" asp-route-id="@item.ID">删除订单</a></td>break;
+                                    case (long)OrdStatus.Closing:<td><a style="color:lightgrey">取消中</a></td> break;
+                                    case (long)OrdStatus.AlreadyDone:<td><a style="color:lightgrey">已完成</a></td> break;
+                                    default:<td></td>break;
+                                }
+                        </tr>
+                     
+
+
+                }
+                </tbody> 
+            </table>
+        </div>
+    </div>
+</div>
+            
+
+

@@ -1,0 +1,41 @@
+﻿@model SportStore.Models.Account
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <div class="modal-dialog" role="document">
+        <form asp-controller="Account" asp-action="Update" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">个人信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class=" form-group">
+                        <label class="control">用户名:@Model?.Name</label>
+                        <input name="User.Name" hidden value="@Model?.Name"  />
+                        <input name="User.ID" hidden value="@Model?.ID" />
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">邮箱</label>
+                        <input name="User.Email" class="form-control" value="@Model?.Email" required placeholder="请输入邮箱" />
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">手机号码</label>
+                        <input name="User.Phone" class="form-control" value="@Model?.Phone" required placeholder="请输入手机号码" />
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">密码</label>
+                        <input name="User.Password" class="form-control" required type="password"  value="@Model?.Password"placeholder="请输入密码" />
+                    </div>
+                    @*<input name="ReturnUrl" value="@(ViewBag.ReturnUrl??"")" hidden />*@
+                </div>
+                <p class="text-danger">@(ViewBag.ErrorMsg ?? "")</p>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-default">重置</a>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal -->
+</div>

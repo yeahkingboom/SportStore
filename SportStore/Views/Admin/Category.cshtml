@@ -1,0 +1,87 @@
+﻿@model List<SportStore.Models.Category>
+
+@{
+    ViewData["Title"] = "Category";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<h3 class="text-center">
+    商品类别管理
+</h3>
+<div class="tabbable" id="tabs-487093">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#panel-881635" data-toggle="tab">已有类别</a>
+        </li>
+        <li>
+            <a href="#panel-143366" data-toggle="tab">添加类别</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="panel-881635">
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>ID</td>
+                            <td>类别名称</td>
+                            <td></td>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.Name</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane" id="panel-143366">
+            <span class="input-group col-md-5" style=" padding-top:10px; margin:auto;">
+                <input type="text" class="form-control" placeholder="输入类别..." id="CategoryName">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="AddCategory()"><span class="glyphicon glyphicon-plus"></span></button>
+                </span>
+            </span>
+        </div>
+    </div>
+</div>
+<script>
+    function AddCategory()
+    {
+        var name = $("#CategoryName").val();
+        if (name == '') { alert('类别名不能为空！'); return; }
+        $.ajax({
+            url: "/Admin/AddCategory?Name=" + name,
+            type: "POST",
+            dataType: "JSON",
+            success: function (result) {
+                if (result.success) {
+                    alert("添加成功!");
+                    $("#CategoryName").val('');
+                    window.location.reload();
+                }
+                else {
+                    alert(result.errorMsg);
+
+                }
+
+            },
+            error: function (e) {
+                alert(e+'网络出现错误，请重试！');
+
+            }
+
+
+        })
+     }
+</script>
+

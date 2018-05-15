@@ -1,0 +1,62 @@
+﻿@model SportStore.Models.Shop
+
+@{
+    ViewData["Title"] = "店铺管理";
+    Layout = "~/Views/Shared/_MyShopLayout.cshtml";
+}
+
+<div>
+    <div class="modal-dialog" role="document">
+        <form asp-controller="Shop" asp-action="UpdateShopInfo" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">店铺信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class=" form-group">
+                        <label class="control">店铺名:@Model.Name</label>
+                        <input name="Shop.Name" hidden value="@Model.Name" />
+                        <input name="Shop.ID" hidden value="@Model.ID" />
+                        <input name="Shop.CreateTime" value="@Model.CreateTime" hidden />
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">活动折扣</label>
+                        <select name="Shop.ShopDiscount" required>
+                            @for(int i = 1; i < 11; i++)
+                            {
+                                if (i == Model.ShopDiscount)
+                                {
+                                    <option value="@i" selected>@i 折</option>
+                                }
+                                else
+                                {
+
+                                    <option value="@i">@i 折</option>
+                                }
+                            }
+                            
+                        </select>
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">审核状态:@(Model.Check?"通过":"正在审核")</label>
+                        <input name="Shop.Check" value="@Model.Check.ToString()"  hidden/>
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">店铺状态:@(Model.Status==-1?"被冻结，请联系管理员！":"正常")</label>
+                        <input name="Shop.Status" hidden="@Model.Status" />
+                    </div>
+                    <div class=" form-group">
+                        <label class="control">公告</label>
+                        <textarea cols="80" rows="50" placeholder="@Model.Notice" class="mytextarea" id="content" name="Shop.Notice" required>@Model.Notice</textarea>
+                    </div>
+                    @*<input name="ReturnUrl" value="@(ViewBag.ReturnUrl??"")" hidden />*@
+                </div>
+                <p class="text-danger">@(ViewBag.ErrorMsg ?? "")</p>
+                <div class="modal-footer">
+                    <a href="" class="btn btn-default">重置</a>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal -->
+</div>
